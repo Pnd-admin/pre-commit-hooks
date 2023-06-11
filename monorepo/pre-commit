@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# List of projects/modules to build and test
+PROJECTS=("project1" "project2" "project3")
+
+# Function to build and test a project/module
+build_and_test() {
+    local project=$1
+
+    # Run build command for the project
+    echo "Running build for $project..."
+    cd "$project"
+
+    #<build command>
+
+    BUILD_STATUS=$?
+    cd ..
+
+    if [ $BUILD_STATUS -ne 0 ]; then
+        echo "Build failed for $project. Please fix the errors before committing."
+        exit 1
+    fi
+
+    # Run tests for the project
+    echo "Running tests for $project..."
+    cd "$project"
+
+    #<test command>
+
+    TEST_STATUS=$?
+    cd ..
+
+    if [ $TEST_STATUS -ne 0 ]; then
+        echo "Tests failed for $project. Please fix the failing tests before committing."
+        exit 1
+    fi
+}
+
+# Iterate over each project/module and build/test them
+for project in "${PROJECTS[@]}"; do
+    build_and_test "$project"
+done
+
+# If everything passes, allow the commit to proceed
+exit 0
